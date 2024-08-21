@@ -67,7 +67,9 @@ export default function Dashboard() {
         navigator.geolocation.clearWatch(watchId);
       }
     };
+// eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isLoaded, isSignedIn, user, router]);
+// eslint-disable-next-line react-hooks/exhaustive-deps
 
   const createOrUpdateUser = async () => {
     if (!user) return;
@@ -372,7 +374,7 @@ export default function Dashboard() {
             </div>
             <div className="bg-gray-800 rounded-xl shadow-md overflow-hidden">
               <div className="p-6">
-                <h2 className="text-2xl font-bold mb-4 text-blue-400">Groups You're In</h2>
+                <h2 className="text-2xl font-bold mb-4 text-blue-400">Groups You&apos;re In</h2>
                 {groups.filter(group => group.leaderId !== currentUser?.id).length === 0 ? (
                   <p className="text-gray-400">You are not a member of any groups yet.</p>
                 ) : (
