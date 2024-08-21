@@ -16,10 +16,14 @@ function GroupManagement({ onGroupCreated }: GroupManagementProps) {
     if (!user) return;
 
     try {
-      const response = await fetch('/api/groups/manage', {
+      console.log('Creating group with leader ID:', user?.id); // Debug log
+      const response = await fetch('/api/groups', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name: groupName, userId: user.id }),
+        body: JSON.stringify({
+          name: groupName,
+          leaderId: user?.id, // Make sure this is correct
+        }),
       });
 
       if (!response.ok) throw new Error('Failed to create group');
@@ -45,7 +49,7 @@ function GroupManagement({ onGroupCreated }: GroupManagementProps) {
         />
         <button
           type="submit"
-          className="w-full bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition duration-300 ease-in-out"
+          className="w-full bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors"
         >
           Create Group
         </button>

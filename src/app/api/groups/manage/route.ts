@@ -5,10 +5,9 @@ import crypto from 'crypto';
 import { eq } from 'drizzle-orm';
 
 function generateInviteLink(): string {
-  const randomBytes = crypto.randomBytes(8).toString('hex');
+  const randomBytes = crypto.randomBytes(16).toString('hex');
   const timestamp = Date.now().toString(36);
-  const inviteCode = `${randomBytes}${timestamp}`;
-  return Buffer.from(inviteCode).toString('base64url');
+  return `${randomBytes}${timestamp}`;
 }
 
 export async function POST(request: Request) {

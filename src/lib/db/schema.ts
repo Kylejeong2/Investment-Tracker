@@ -9,6 +9,7 @@ export const $groups = pgTable('groups', {
 });
 
 export const $groupMembers = pgTable('group_members', {
+  id: uuid('id').defaultRandom().primaryKey(),
   groupId: uuid('group_id').references(() => $groups.id),
   userId: text('user_id').notNull(),
   joinedAt: timestamp('joined_at').defaultNow(),
