@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { $groups, $groupMembers, $users } from '@/lib/db/schema';
 import { eq, and } from 'drizzle-orm';
+import { auth } from '@clerk/nextjs/server';
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
@@ -26,15 +27,15 @@ export async function GET(request: Request) {
 }
 
 export async function POST(request: Request) {
-  const { inviteCode, userId } = await request.json();
-  console.log('Received request:', { inviteCode, userId });
-
-  if (!inviteCode || !userId) {
-    return NextResponse.json({ error: 'Invite code and user ID are required' }, { status: 400 });
+  const { userId } = auth();
+  if (!userId) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
+  const { inviteCode } = await request.json();
+
   try {
-    // Find the group by invite code
+    // Find the group by invite link
     const [group] = await db.select().from($groups).where(eq($groups.inviteLink, inviteCode));
 
     if (!group) {
@@ -53,7 +54,6 @@ export async function POST(request: Request) {
       );
 
     if (existingMember) {
-      console.log('User already a member:', { userId, groupId: group.id });
       return NextResponse.json({ error: 'User is already a member of this group' }, { status: 400 });
     }
 

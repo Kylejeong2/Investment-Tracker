@@ -40,6 +40,20 @@ export default function Dashboard() {
   const [selectedGroupId, setSelectedGroupId] = useState<string | null>(null);
   const [isLocationPermissionGranted, setIsLocationPermissionGranted] = useState<boolean | null>(null);
 
+  useEffect(() => {
+    if (isLoaded && isSignedIn && user) {
+      setupUser();
+    } else if (isLoaded && !isSignedIn) {
+      router.push('/');
+    }
+
+    return () => {
+      if (watchId !== null) {
+        navigator.geolocation.clearWatch(watchId);
+      }
+    };
+  }, [isLoaded, isSignedIn, user]);
+
   const setupUser = async () => {
     setIsLoading(true);
     try {
@@ -54,22 +68,6 @@ export default function Dashboard() {
       setIsLoading(false);
     }
   };
-
-  useEffect(() => {
-    if (isLoaded && isSignedIn && user) {
-      setupUser();
-    } else if (isLoaded && !isSignedIn) {
-      router.push('/');
-    }
-
-    return () => {
-      if (watchId !== null) {
-        navigator.geolocation.clearWatch(watchId);
-      }
-    };
-// eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isLoaded, isSignedIn, user, router]);
-// eslint-disable-next-line react-hooks/exhaustive-deps
 
   const createOrUpdateUser = async () => {
     if (!user) return;
@@ -219,7 +217,7 @@ export default function Dashboard() {
     // Check if the user is the leader of the group
     const group = groups.find(g => g.id === groupId);
     if (group && group.leaderId === currentUser.id) {
-      alert("You can&apos;t leave a group you&apos;re leading. Please delete the group or transfer leadership to another member.");
+      alert("You can't leave a group you're leading. Please delete the group or transfer leadership to another member.");
       return;
     }
 
@@ -243,10 +241,11 @@ export default function Dashboard() {
     try {
       const response = await fetch(`/api/groups/${groupId}/invite`);
       if (!response.ok) {
-        throw new Error('Failed to get invite link');
+        throw new Error('Failed to fetch invite link');
       }
       const { inviteLink } = await response.json();
-      await navigator.clipboard.writeText(`${process.env.NEXT_PUBLIC_APP_URL}/join-group/${inviteLink}`);
+      const inviteUrl = `${window.location.origin}/join-group/${inviteLink}`;
+      await navigator.clipboard.writeText(inviteUrl);
       alert('Invite link copied to clipboard!');
     } catch (error) {
       console.error('Error copying invite link:', error);
@@ -291,9 +290,6 @@ export default function Dashboard() {
             Sign Out
           </button>
         </header>
-        {/* <pre className="bg-gray-800 p-4 rounded-lg overflow-auto max-w-full">
-          {JSON.stringify(currentUser, null, 2)}
-        </pre> */}
         {isLocationPermissionGranted === null && (
           <div className="mb-4 bg-yellow-600 text-white p-4 rounded-md">
             <p>This app works best with location services enabled. Would you like to enable location services?</p>
@@ -329,7 +325,7 @@ export default function Dashboard() {
               <div className="p-6">
                 <h2 className="text-2xl font-bold mb-4 text-blue-400">Groups You Lead</h2>
                 {groups.filter(group => group.leaderId === currentUser?.id).length === 0 ? (
-                  <p className="text-gray-400">You don&apos;t lead any groups.</p>
+                  <p className="text-gray-400">You don't lead any groups.</p>
                 ) : (
                   <ul className="space-y-4">
                     {groups.filter(group => group.leaderId === currentUser?.id).map((group) => (
@@ -377,7 +373,7 @@ export default function Dashboard() {
             </div>
             <div className="bg-gray-800 rounded-xl shadow-md overflow-hidden">
               <div className="p-6">
-                <h2 className="text-2xl font-bold mb-4 text-blue-400">Groups You&apos;re In</h2>
+                <h2 className="text-2xl font-bold mb-4 text-blue-400">Groups You're In</h2>
                 {groups.filter(group => group.leaderId !== currentUser?.id).length === 0 ? (
                   <p className="text-gray-400">You are not a member of any groups yet.</p>
                 ) : (

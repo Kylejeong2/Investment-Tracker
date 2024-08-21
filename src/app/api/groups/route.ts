@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { $groups, $groupMembers } from '@/lib/db/schema';
 import { auth } from '@clerk/nextjs/server';
+import crypto from 'crypto';
 
 export async function POST(request: Request) {
   const { userId } = auth();
@@ -41,7 +42,7 @@ export async function POST(request: Request) {
   }
 }
 
-function generateInviteLink() {
-  // Implement invite link generation logic
-  return 'some-unique-invite-link';
+function generateInviteLink(): string {
+  const randomBytes = crypto.randomBytes(16).toString('hex');
+  return randomBytes;
 }

@@ -11,10 +11,10 @@ export default function JoinGroup({ params }: { params: { inviteCode: string } }
   const [groupName, setGroupName] = useState('');
 
   const fetchGroupName = useCallback(async () => {
-    const response = await fetch(`/api/groups/join?inviteCode=${params.inviteCode}`);
+    const response = await fetch(`/api/groups/invite/${params.inviteCode}`);
     const data = await response.json();
-    if (data.groupName) {
-      setGroupName(data.groupName);
+    if (data.name) {
+      setGroupName(data.name);
     } else {
       router.push('/'); // Redirect if group not found
     }
