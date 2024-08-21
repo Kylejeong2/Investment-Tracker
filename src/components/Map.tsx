@@ -30,13 +30,16 @@ export default function Map({ currentUser, groups }: MapProps) {
   const markers = useRef<{ [key: string]: mapboxgl.Marker }>({});
 
   useEffect(() => {
-    if (map.current || !currentUser) return;
+    if (map.current) return;
     if (mapContainer.current) {
+      const defaultLocation: [number, number] = [-122.4241, 37.7762]; // Default to Hayes Valley, San Francisco
+      const startLocation = currentUser?.location || defaultLocation;
+
       map.current = new mapboxgl.Map({
         container: mapContainer.current,
         style: 'mapbox://styles/mapbox/streets-v11',
-        center: currentUser.location, // Start at the user's location
-        zoom: 14
+        center: startLocation,
+        zoom: currentUser?.location ? 14 : 2 // Zoom out if using default location
       });
     }
   }, [currentUser]);
