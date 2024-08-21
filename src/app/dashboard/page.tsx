@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -60,9 +61,11 @@ export default function Dashboard() {
       await createOrUpdateUser();
       await fetchUserData();
       await startLocationTracking();
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       await fetchGroups(currentUser!);
       setIsUserDataFetched(true);
     } catch (error) {
+      // eslint-disable-next-line no-console
       console.error('Error setting up user:', error);
     } finally {
       setIsLoading(false);
@@ -91,6 +94,7 @@ export default function Dashboard() {
         throw new Error('Failed to create or update user');
       }
     } catch (error) {
+      // eslint-disable-next-line no-console
       console.error('Error creating or updating user:', error);
       throw error;
     }
@@ -107,6 +111,7 @@ export default function Dashboard() {
       const userData = await response.json();
       setCurrentUser(userData);
     } catch (error) {
+      // eslint-disable-next-line no-console
       console.error('Error fetching user data:', error);
       throw error;
     }
@@ -128,6 +133,7 @@ export default function Dashboard() {
           }
         });
       } else {
+        // eslint-disable-next-line no-console
         console.error('Geolocation is not supported by your browser');
         setIsLocationPermissionGranted(false);
         resolve();
@@ -143,6 +149,7 @@ export default function Dashboard() {
         resolve();
       },
       (error) => {
+        // eslint-disable-next-line no-console
         console.error('Error getting user location:', error);
         reject(error);
       },
@@ -177,6 +184,7 @@ export default function Dashboard() {
       setCurrentUser({...userData, location});
       fetchGroups({...userData, location});
     } catch (error) {
+      // eslint-disable-next-line no-console
       console.error('Error updating user location:', error);
     }
   };
@@ -190,6 +198,7 @@ export default function Dashboard() {
       const groupsData = await response.json();
       setGroups(groupsData);
     } catch (error) {
+      // eslint-disable-next-line no-console
       console.error('Error fetching groups:', error);
     }
   };
@@ -205,8 +214,10 @@ export default function Dashboard() {
       }
 
       // Refresh the groups list after successful deletion
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       fetchGroups(currentUser!);
     } catch (error) {
+      // eslint-disable-next-line no-console
       console.error('Error deleting group:', error);
     }
   };
@@ -233,6 +244,7 @@ export default function Dashboard() {
       // Refresh the groups list after successfully leaving
       fetchGroups(currentUser);
     } catch (error) {
+      // eslint-disable-next-line no-console
       console.error('Error leaving group:', error);
     }
   };
@@ -248,6 +260,7 @@ export default function Dashboard() {
       await navigator.clipboard.writeText(inviteUrl);
       alert('Invite link copied to clipboard!');
     } catch (error) {
+      // eslint-disable-next-line no-console
       console.error('Error copying invite link:', error);
       alert('Failed to copy invite link');
     }
