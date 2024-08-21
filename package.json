@@ -9,18 +9,28 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@clerk/nextjs": "^5.3.1",
+    "@supabase/supabase-js": "^2.45.1",
+    "config": "^3.3.12",
+    "dotenv": "^16.4.5",
+    "drizzle-orm": "^0.33.0",
+    "mapbox-gl": "^3.6.0",
+    "next": "14.2.5",
+    "pg": "^8.12.0",
+    "postgres": "^3.4.4",
     "react": "^18",
-    "react-dom": "^18",
-    "next": "14.2.5"
+    "react-dom": "^18"
   },
   "devDependencies": {
-    "typescript": "^5",
     "@types/node": "^20",
+    "@types/pg": "^8.11.6",
     "@types/react": "^18",
     "@types/react-dom": "^18",
+    "drizzle-kit": "^0.24.0",
+    "eslint": "^8",
+    "eslint-config-next": "14.2.5",
     "postcss": "^8",
     "tailwindcss": "^3.4.1",
-    "eslint": "^8",
-    "eslint-config-next": "14.2.5"
+    "typescript": "^5"
   }
 }
