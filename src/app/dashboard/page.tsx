@@ -260,7 +260,6 @@ export default function Dashboard() {
 
   const handleSignOut = async () => {
     await clerk.signOut();
-    const router = useRouter();
     router.push('/');
   };
 
