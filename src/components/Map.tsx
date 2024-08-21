@@ -22,9 +22,11 @@ interface Group {
 interface MapProps {
   currentUser: User | null;
   groups: Group[];
+  selectedGroupId: string | null;
+  isLocationPermissionGranted: boolean | null;
 }
 
-export default function Map({ currentUser, groups }: MapProps) {
+const Map: React.FC<MapProps> = ({ currentUser, groups, selectedGroupId, isLocationPermissionGranted }) => {
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<mapboxgl.Map | null>(null);
   const markers = useRef<{ [key: string]: mapboxgl.Marker }>({});
@@ -91,3 +93,5 @@ export default function Map({ currentUser, groups }: MapProps) {
 
   return <div ref={mapContainer} className="w-full h-full" />;
 }
+
+export default Map;

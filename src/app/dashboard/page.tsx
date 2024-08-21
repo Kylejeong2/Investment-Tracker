@@ -114,45 +114,39 @@ export default function Dashboard() {
     }
   };
 
-  const startLocationTracking = async () => {
-    if ('geolocation' in navigator) {
-      try {
-        const permission = await navigator.permissions.query({ name: 'geolocation' });
-        if (permission.state === 'granted' || permission.state === 'prompt') {
-          setIsLocationPermissionGranted(true);
-          navigator.geolocation.getCurrentPosition(
-            async (position) => {
-              const newLocation: [number, number] = [position.coords.longitude, position.coords.latitude];
-              await updateUserLocation(newLocation);
-              initializeGeolocation();
-            },
-            (error) => {
-              console.error('Error getting user location:', error);
-              setIsLocationPermissionGranted(false);
-            },
-            { enableHighAccuracy: true, timeout: 5000, maximumAge: 0 }
-          );
-        } else {
-          setIsLocationPermissionGranted(false);
-        }
-      } catch (error) {
-        console.error('Error checking geolocation permission:', error);
+  const startLocationTracking = () => {
+    return new Promise<void>((resolve, reject) => {
+      if ('geolocation' in navigator) {
+        navigator.permissions.query({ name: 'geolocation' }).then((result) => {
+          if (result.state === 'granted') {
+            setIsLocationPermissionGranted(true);
+            initializeGeolocation(resolve, reject);
+          } else if (result.state === 'prompt') {
+            setIsLocationPermissionGranted(null);
+            resolve();
+          } else {
+            setIsLocationPermissionGranted(false);
+            resolve();
+          }
+        });
+      } else {
+        console.error('Geolocation is not supported by your browser');
         setIsLocationPermissionGranted(false);
+        resolve();
       }
-    } else {
-      console.error('Geolocation is not supported by your browser');
-      setIsLocationPermissionGranted(false);
-    }
+    });
   };
 
-  const initializeGeolocation = () => {
+  const initializeGeolocation = (resolve: () => void, reject: (error: any) => void) => {
     const id = navigator.geolocation.watchPosition(
       async (position) => {
         const newLocation: [number, number] = [position.coords.longitude, position.coords.latitude];
         await updateUserLocation(newLocation);
+        resolve();
       },
       (error) => {
         console.error('Error getting user location:', error);
+        reject(error);
       },
       { enableHighAccuracy: true, maximumAge: 0, timeout: 5000 }
     );
@@ -182,7 +176,7 @@ export default function Dashboard() {
       }
 
       const userData = await response.json();
-      setCurrentUser(prevUser => ({...prevUser!, location}));
+      setCurrentUser({...userData, location});
       fetchGroups({...userData, location});
     } catch (error) {
       console.error('Error updating user location:', error);
@@ -297,11 +291,14 @@ export default function Dashboard() {
             Sign Out
           </button>
         </header>
+        {/* <pre className="bg-gray-800 p-4 rounded-lg overflow-auto max-w-full">
+          {JSON.stringify(currentUser, null, 2)}
+        </pre> */}
         {isLocationPermissionGranted === null && (
           <div className="mb-4 bg-yellow-600 text-white p-4 rounded-md">
             <p>This app works best with location services enabled. Would you like to enable location services?</p>
             <button
-              onClick={startLocationTracking}
+              onClick={() => startLocationTracking()}
               className="mt-2 bg-white text-yellow-600 px-4 py-2 rounded-md hover:bg-gray-100 transition duration-300 ease-in-out"
             >
               Enable Location Services
@@ -422,7 +419,12 @@ export default function Dashboard() {
           </aside>
           <section className="w-full lg:w-2/3">
             <div className="bg-gray-800 rounded-xl shadow-md overflow-hidden h-[600px]">
-              <Map currentUser={currentUser ? {...currentUser, name: `${currentUser.firstName} ${currentUser.lastName}`} : null} groups={groups} />
+              <Map
+                currentUser={currentUser ? {...currentUser, name: `${currentUser.firstName} ${currentUser.lastName}`} : null}
+                groups={groups}
+                selectedGroupId={selectedGroupId}
+                isLocationPermissionGranted={isLocationPermissionGranted}
+              />
             </div>
           </section>
         </div>

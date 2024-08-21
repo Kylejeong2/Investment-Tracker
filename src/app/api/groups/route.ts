@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
-import { $groups } from '@/lib/db/schema';
+import { $groups, $groupMembers } from '@/lib/db/schema';
 import { auth } from '@clerk/nextjs/server';
 
 export async function POST(request: Request) {
@@ -25,6 +25,14 @@ export async function POST(request: Request) {
     }).returning();
 
     console.log('New group created:', newGroup); // Debug log
+
+    // Add the user as a group member
+    await db.insert($groupMembers).values({
+      groupId: newGroup.id,
+      userId: leaderId,
+    });
+
+    console.log('Leader added as group member:', leaderId); // Debug log
 
     return NextResponse.json(newGroup);
   } catch (error) {
