@@ -58,7 +58,7 @@ export default function JoinGroup({ params }: { params: { inviteCode: string } }
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-900">
       <div className="bg-gray-800 p-8 rounded-lg shadow-md text-center">
         <h1 className="text-3xl font-bold mb-4 text-blue-400">Join Group</h1>
-        <p className="mb-6 text-gray-300">You've been invited to join {groupName}!</p>
+        <p className="mb-6 text-gray-300">You&apos;ve been invited to join {groupName}!</p>
         <button
           onClick={handleJoinGroup}
           disabled={isJoining}
