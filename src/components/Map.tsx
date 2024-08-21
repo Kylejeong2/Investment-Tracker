@@ -35,7 +35,7 @@ export default function Map({ currentUser, groups }: MapProps) {
       map.current = new mapboxgl.Map({
         container: mapContainer.current,
         style: 'mapbox://styles/mapbox/streets-v11',
-        center: [currentUser.location[0], currentUser.location[1]], // [longitude, latitude]
+        center: currentUser.location, // Start at the user's location
         zoom: 14
       });
     }

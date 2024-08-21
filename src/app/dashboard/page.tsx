@@ -118,21 +118,19 @@ export default function Dashboard() {
     if ('geolocation' in navigator) {
       try {
         const permission = await navigator.permissions.query({ name: 'geolocation' });
-        if (permission.state === 'granted') {
+        if (permission.state === 'granted' || permission.state === 'prompt') {
           setIsLocationPermissionGranted(true);
-          initializeGeolocation();
-        } else if (permission.state === 'prompt') {
-          setIsLocationPermissionGranted(null);
-          // The user will be prompted when we call getCurrentPosition
           navigator.geolocation.getCurrentPosition(
-            () => {
-              setIsLocationPermissionGranted(true);
+            async (position) => {
+              const newLocation: [number, number] = [position.coords.longitude, position.coords.latitude];
+              await updateUserLocation(newLocation);
               initializeGeolocation();
             },
             (error) => {
               console.error('Error getting user location:', error);
               setIsLocationPermissionGranted(false);
-            }
+            },
+            { enableHighAccuracy: true, timeout: 5000, maximumAge: 0 }
           );
         } else {
           setIsLocationPermissionGranted(false);
@@ -184,7 +182,7 @@ export default function Dashboard() {
       }
 
       const userData = await response.json();
-      setCurrentUser({...userData, location});
+      setCurrentUser(prevUser => ({...prevUser!, location}));
       fetchGroups({...userData, location});
     } catch (error) {
       console.error('Error updating user location:', error);
