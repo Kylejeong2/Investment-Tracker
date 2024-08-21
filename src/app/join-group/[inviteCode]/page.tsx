@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useUser } from '@clerk/nextjs';
 import { useRouter } from 'next/navigation';
 
@@ -10,15 +10,7 @@ export default function JoinGroup({ params }: { params: { inviteCode: string } }
   const [isJoining, setIsJoining] = useState(false);
   const [groupName, setGroupName] = useState('');
 
-  useEffect(() => {
-    if (isLoaded && !isSignedIn) {
-      router.push(`/sign-in?redirect=/join-group/${params.inviteCode}`);
-    } else if (isLoaded && isSignedIn) {
-      fetchGroupName();
-    }
-  }, [isLoaded, isSignedIn, router, params.inviteCode]);
-
-  const fetchGroupName = async () => {
+  const fetchGroupName = useCallback(async () => {
     const response = await fetch(`/api/groups/join?inviteCode=${params.inviteCode}`);
     const data = await response.json();
     if (data.groupName) {
@@ -26,7 +18,15 @@ export default function JoinGroup({ params }: { params: { inviteCode: string } }
     } else {
       router.push('/'); // Redirect if group not found
     }
-  };
+  }, [params.inviteCode, router]);
+
+  useEffect(() => {
+    if (isLoaded && !isSignedIn) {
+      router.push(`/sign-in?redirect=/join-group/${params.inviteCode}`);
+    } else if (isLoaded && isSignedIn) {
+      fetchGroupName();
+    }
+  }, [isLoaded, isSignedIn, router, params.inviteCode, fetchGroupName]);
 
   const handleJoinGroup = async () => {
     if (!user) return;

@@ -40,6 +40,21 @@ export default function Dashboard() {
   const [selectedGroupId, setSelectedGroupId] = useState<string | null>(null);
   const [isLocationPermissionGranted, setIsLocationPermissionGranted] = useState<boolean | null>(null);
 
+  const setupUser = async () => {
+    setIsLoading(true);
+    try {
+      await createOrUpdateUser();
+      await fetchUserData();
+      await startLocationTracking();
+      await fetchGroups(currentUser!);
+      setIsUserDataFetched(true);
+    } catch (error) {
+      console.error('Error setting up user:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   useEffect(() => {
     if (isLoaded && isSignedIn && user) {
       setupUser();
@@ -52,28 +67,7 @@ export default function Dashboard() {
         navigator.geolocation.clearWatch(watchId);
       }
     };
-  }, [isLoaded, isSignedIn, user]);
-
-  const setupUser = async () => {
-    setIsLoading(true);
-    try {
-      // First, ensure user data is in the database
-      await createOrUpdateUser();
-      
-      // Then fetch the user data
-      await fetchUserData();
-      
-      // Start location tracking and fetch groups
-      await startLocationTracking();
-      await fetchGroups(currentUser!);
-      
-      setIsUserDataFetched(true);
-    } catch (error) {
-      console.error('Error setting up user:', error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  }, [isLoaded, isSignedIn, user, router]);
 
   const createOrUpdateUser = async () => {
     if (!user) return;
