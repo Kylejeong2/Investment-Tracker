@@ -220,7 +220,7 @@ export default function Dashboard() {
     // Check if the user is the leader of the group
     const group = groups.find(g => g.id === groupId);
     if (group && group.leaderId === currentUser.id) {
-      alert("You can't leave a group you're leading. Please delete the group or transfer leadership to another member.");
+      alert("You can&apos;t leave a group you&apos;re leading. Please delete the group or transfer leadership to another member.");
       return;
     }
 
@@ -376,7 +376,7 @@ export default function Dashboard() {
             </div>
             <div className="bg-gray-800 rounded-xl shadow-md overflow-hidden">
               <div className="p-6">
-                <h2 className="text-2xl font-bold mb-4 text-blue-400">Groups You're In</h2>
+                <h2 className="text-2xl font-bold mb-4 text-blue-400">Groups You&apos;re In</h2>
                 {groups.filter(group => group.leaderId !== currentUser?.id).length === 0 ? (
                   <p className="text-gray-400">You are not a member of any groups yet.</p>
                 ) : (
