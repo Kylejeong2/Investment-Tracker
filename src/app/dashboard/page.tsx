@@ -328,7 +328,7 @@ export default function Dashboard() {
               <div className="p-6">
                 <h2 className="text-2xl font-bold mb-4 text-blue-400">Groups You Lead</h2>
                 {groups.filter(group => group.leaderId === currentUser?.id).length === 0 ? (
-                  <p className="text-gray-400">You don't lead any groups.</p>
+                  <p className="text-gray-400">You don&apos;t lead any groups.</p>
                 ) : (
                   <ul className="space-y-4">
                     {groups.filter(group => group.leaderId === currentUser?.id).map((group) => (
